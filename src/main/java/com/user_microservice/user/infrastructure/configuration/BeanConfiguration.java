@@ -15,6 +15,7 @@ import com.user_microservice.user.infrastructure.persistence.jpa.repository.IUse
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class BeanConfiguration {
     private final IUserEntityMapper userEntityMapper;
     private final IRoleRepository roleRepository;
     private final IRoleEntityMapper roleEntityMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public IRolePersistencePort rolePersistencePort() {
@@ -32,7 +34,7 @@ public class BeanConfiguration {
 
     @Bean
     public IUserPersistencePort userModelPersistencePort() {
-        return new UserJpaAdapter(userRepository,userEntityMapper);
+        return new UserJpaAdapter(userRepository,userEntityMapper,passwordEncoder);
     }
 
     @Bean
