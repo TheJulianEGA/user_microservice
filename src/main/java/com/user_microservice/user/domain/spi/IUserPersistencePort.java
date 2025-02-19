@@ -4,7 +4,7 @@ import com.user_microservice.user.domain.model.User;
 
 public interface IUserPersistencePort {
 
-    User resgisterUser(User user);
+    User registerUser(User user);
     boolean existsUserByEmail(String email);
     boolean existsUserByDocumentNumber(String documentNumber);
 

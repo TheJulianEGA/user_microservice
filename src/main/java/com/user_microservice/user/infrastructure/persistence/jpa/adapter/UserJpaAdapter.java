@@ -17,7 +17,7 @@ public class UserJpaAdapter implements IUserPersistencePort {
 
 
     @Override
-    public User resgisterUser(User user) {
+    public User registerUser(User user) {
 
         String encoderPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encoderPassword);

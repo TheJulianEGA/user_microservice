@@ -21,11 +21,9 @@ public class UserUseCase implements IUserServicePort {
     @Override
     public User registerUser(User user) {
 
-
-
         validateUser( user);
 
-        return userPersistencePort.resgisterUser(user);
+        return userPersistencePort.registerUser(user);
     }
 
     private void validateUser(User user) {
