@@ -5,11 +5,11 @@ import com.user_microservice.user.infrastructure.persistence.jpa.entity.UserEnti
 import com.user_microservice.user.infrastructure.persistence.jpa.mapper.IUserEntityMapper;
 import com.user_microservice.user.infrastructure.persistence.jpa.repository.IUserRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -17,6 +17,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class UserJpaAdapterTest {
 
     @Mock
@@ -31,10 +32,6 @@ class UserJpaAdapterTest {
     @InjectMocks
     private UserJpaAdapter userJpaAdapter;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     @DisplayName("Should correctly save a user and return the User model")

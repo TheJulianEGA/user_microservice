@@ -2,7 +2,7 @@ package com.user_microservice.user.infrastructure.security.filter;
 
 import com.user_microservice.user.infrastructure.persistence.jpa.entity.UserEntity;
 import com.user_microservice.user.infrastructure.persistence.jpa.repository.IUserRepository;
-import com.user_microservice.user.infrastructure.security.service.JwtService;
+import com.user_microservice.user.infrastructure.security.service.IJwtService;
 import com.user_microservice.user.infrastructure.util.InfrastructureConstants;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -19,12 +19,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter  extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final IJwtService jwtService;
     private final IUserRepository userRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);

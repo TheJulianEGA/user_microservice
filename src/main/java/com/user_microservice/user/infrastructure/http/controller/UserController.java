@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,8 @@ public class UserController {
 
     @Operation(
             summary = "Create a new user",
-            description = "Registers a new user in the system and returns the created user details."
+            description = "Registers a new user in the system and returns the created user details.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User successfully created",
@@ -33,10 +35,11 @@ public class UserController {
                             schema = @Schema(implementation = UserResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request data",
                     content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Insufficient permissions",
+                    content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-
     @PreAuthorize(InfrastructureConstants.ROLE_ADMINISTRATOR + " or " + InfrastructureConstants.ROLE_OWNER )
     @PostMapping("/create")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest) {
@@ -45,8 +48,6 @@ public class UserController {
 
         return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
-
-
 
     @Operation(
             summary = "Check if a user exists with role OWNER",
@@ -57,7 +58,6 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid request data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-
     @GetMapping("/exists_user_owner/{userId}")
     public ResponseEntity<Boolean> existsUserWithOwnerRole(@PathVariable Long userId) {
         boolean exists = userHandler.existsUserWithOwnerRole(userId);

@@ -13,11 +13,12 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
-public class JwtService {
+public class JwtService implements IJwtService{
 
     @Value("${JWT_SECRET_KEY}")
     private String secretKey;
 
+    @Override
     public String generateToken(User user, Map<String, Object> extraClaims) {
 
         return Jwts.builder()
@@ -30,10 +31,12 @@ public class JwtService {
                 .compact();
     }
 
+    @Override
     public String extractUsername(String jwt) {
         return extractAllClaims(jwt).getSubject();
     }
 
+    @Override
     public boolean isTokenValid(String token) {
         try {
             Claims claims = extractAllClaims(token);

@@ -15,7 +15,6 @@ public class UserUseCase implements IUserServicePort {
     private final IUserPersistencePort userPersistencePort;
     private final IAuthenticationSecurityPort authenticationSecurityPort;
 
-
     public UserUseCase(IUserPersistencePort persistencePort, IAuthenticationSecurityPort authenticationSecurityPort) {
         this.userPersistencePort = persistencePort;
         this.authenticationSecurityPort = authenticationSecurityPort;
@@ -23,9 +22,10 @@ public class UserUseCase implements IUserServicePort {
 
     public User registerUser(User user) {
         Long authenticatedUserId = authenticationSecurityPort.getAuthenticatedUserId();
-        validatePermissions(authenticatedUserId, user.getRole().getName());
 
         validateUser(user);
+
+        validatePermissions(authenticatedUserId, user.getRole().getName());
 
         return userPersistencePort.registerUser(user);
     }

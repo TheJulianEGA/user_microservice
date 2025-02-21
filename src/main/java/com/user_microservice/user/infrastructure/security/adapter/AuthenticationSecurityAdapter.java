@@ -9,7 +9,7 @@ import com.user_microservice.user.domain.security.IAuthenticationSecurityPort;
 import com.user_microservice.user.domain.spi.IRolePersistencePort;
 import com.user_microservice.user.infrastructure.persistence.jpa.entity.UserEntity;
 import com.user_microservice.user.infrastructure.persistence.jpa.mapper.IUserEntityMapper;
-import com.user_microservice.user.infrastructure.security.service.JwtService;
+import com.user_microservice.user.infrastructure.security.service.IJwtService;
 import com.user_microservice.user.infrastructure.util.InfrastructureConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuthenticationSecurityAdapter implements IAuthenticationSecurityPort {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
+    private final IJwtService jwtService;
     private final IRolePersistencePort rolePersistencePort;
     private final IUserEntityMapper userEntityMapper;
 
@@ -91,7 +91,11 @@ public class AuthenticationSecurityAdapter implements IAuthenticationSecurityPor
             if (principal instanceof UserDetails userDetails) {
                 return Long.valueOf(userDetails.getUsername());
             } else if (principal instanceof String userId) {
-                return Long.valueOf(userId);
+                try {
+                    return Long.valueOf(userId);
+                } catch (NumberFormatException e) {
+                    throw new NoAuthenticatedUserIdFoundException(InfrastructureConstants.NO_AUTHENTICATED_USER_ID_FOUND);
+                }
             } else {
                 throw new NoAuthenticatedUserIdFoundException(InfrastructureConstants.NO_AUTHENTICATED_USER_ID_FOUND);
             }
