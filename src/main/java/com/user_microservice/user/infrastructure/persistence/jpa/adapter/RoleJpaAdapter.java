@@ -9,8 +9,10 @@ import com.user_microservice.user.infrastructure.persistence.jpa.mapper.IRoleEnt
 import com.user_microservice.user.infrastructure.persistence.jpa.repository.IRoleRepository;
 import com.user_microservice.user.infrastructure.util.InfrastructureConstants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Service
 public class RoleJpaAdapter implements IRolePersistencePort {
 
     private final IRoleRepository roleRepository;

@@ -1,4 +1,4 @@
-package com.user_microservice.user.application.handler;
+package com.user_microservice.user.application.handler.userhandler;
 
 import com.user_microservice.user.application.dto.userdto.UserRequest;
 import com.user_microservice.user.application.dto.userdto.UserResponse;
@@ -12,15 +12,17 @@ import com.user_microservice.user.domain.util.RoleName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class UserHandlerTest {
 
     @Mock
@@ -46,7 +48,6 @@ class UserHandlerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
 
         userRequest = new UserRequest();
         userRequest.setRole("ADMINISTRATOR");

@@ -7,5 +7,7 @@ public interface IUserPersistencePort {
     User registerUser(User user);
     boolean existsUserByEmail(String email);
     boolean existsUserByDocumentNumber(String documentNumber);
+    User getUserById(Long userId);
+    User getUserByEmail(String email);
 
 }

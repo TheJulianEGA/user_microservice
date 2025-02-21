@@ -1,4 +1,4 @@
-package com.user_microservice.user.application.handler;
+package com.user_microservice.user.application.handler.userhandler;
 
 import com.user_microservice.user.application.dto.userdto.UserRequest;
 import com.user_microservice.user.application.dto.userdto.UserResponse;
@@ -37,5 +37,11 @@ public class UserHandler implements IUserHandler {
         User registeredUser = userServicePort.registerUser(user);
 
         return userResponseMapper.toResponse(registeredUser);
+    }
+
+    @Override
+    public boolean existsUserWithOwnerRole(Long userId) {
+
+        return userServicePort.existsUserWithOwnerRole(userId);
     }
 }

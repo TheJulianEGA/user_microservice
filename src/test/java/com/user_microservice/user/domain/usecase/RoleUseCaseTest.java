@@ -4,16 +4,17 @@ import com.user_microservice.user.domain.exception.RoleNameNotFoundException;
 import com.user_microservice.user.domain.model.Role;
 import com.user_microservice.user.domain.spi.IRolePersistencePort;
 import com.user_microservice.user.domain.util.RoleName;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class RoleUseCaseTest {
 
     @Mock
@@ -21,11 +22,6 @@ class RoleUseCaseTest {
 
     @InjectMocks
     private RoleUseCase roleModelUseCase;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     @DisplayName("Should return role when valid name is provided")
