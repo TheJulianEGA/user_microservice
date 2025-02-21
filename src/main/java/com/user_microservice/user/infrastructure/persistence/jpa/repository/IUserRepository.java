@@ -10,4 +10,5 @@ public interface IUserRepository extends JpaRepository<UserEntity,Long> {
     Optional<UserEntity> findByDocumentNumber(String documentNumber);
     Optional<UserEntity> findByEmail(String email);
 
+
 }

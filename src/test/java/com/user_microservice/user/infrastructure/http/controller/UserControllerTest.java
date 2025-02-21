@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.user_microservice.user.application.dto.userdto.UserRequest;
 import com.user_microservice.user.application.dto.userdto.UserResponse;
-import com.user_microservice.user.application.handler.IUserHandler;
+import com.user_microservice.user.application.handler.userhandler.IUserHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
