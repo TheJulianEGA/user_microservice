@@ -86,19 +86,25 @@ public class AuthenticationSecurityAdapter implements IAuthenticationSecurityPor
         @Override
         public Long getAuthenticatedUserId() {
 
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if (principal instanceof UserDetails userDetails) {
-                return Long.valueOf(userDetails.getUsername());
-            } else if (principal instanceof String userId) {
-                try {
-                    return Long.valueOf(userId);
-                } catch (NumberFormatException e) {
-                    throw new NoAuthenticatedUserIdFoundException(InfrastructureConstants.NO_AUTHENTICATED_USER_ID_FOUND);
-                }
-            } else {
-                throw new NoAuthenticatedUserIdFoundException(InfrastructureConstants.NO_AUTHENTICATED_USER_ID_FOUND);
+            if (authentication == null || authentication.getPrincipal() == null) {
+                return null;
             }
+
+            Object principal = authentication.getPrincipal();
+
+            try {
+                if (principal instanceof UserDetails userDetails) {
+                    return Long.valueOf(userDetails.getUsername());
+                } else if (principal instanceof String userId) {
+                    return Long.valueOf(userId);
+                }
+            } catch (NumberFormatException e) {
+                return null;
+            }
+
+            return null;
         }
 
 

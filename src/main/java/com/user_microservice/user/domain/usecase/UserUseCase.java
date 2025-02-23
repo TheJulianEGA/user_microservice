@@ -20,30 +20,20 @@ public class UserUseCase implements IUserServicePort {
         this.authenticationSecurityPort = authenticationSecurityPort;
     }
 
+    @Override
     public User registerUser(User user) {
+
         Long authenticatedUserId = authenticationSecurityPort.getAuthenticatedUserId();
 
         validateUser(user);
 
-        validatePermissions(authenticatedUserId, user.getRole().getName());
+        if (authenticatedUserId == null) {
+            validatePermissionsForCustomer(user);
+        } else {
+            validatePermissionsForAdminAndOwner(authenticatedUserId, user.getRole().getName());
+        }
 
         return userPersistencePort.registerUser(user);
-    }
-
-    private void validatePermissions(Long authenticatedUserId, RoleName newUserRole) {
-        User authenticatedUser = userPersistencePort.getUserById(authenticatedUserId);
-
-        if (newUserRole == RoleName.OWNER && authenticatedUser.getRole().getName() != RoleName.ADMINISTRATOR) {
-            throw new InvalidUserException(DomainConstants.ONLY_ADMIN_CAN_CREATE_OWNER);
-        }
-
-        if (newUserRole == RoleName.EMPLOYEE && authenticatedUser.getRole().getName() != RoleName.OWNER) {
-            throw new InvalidUserException(DomainConstants.ONLY_OWNER_CAN_CREATE_EMPLOYEE);
-        }
-
-        if (newUserRole == RoleName.CUSTOMER || newUserRole == RoleName.ADMINISTRATOR) {
-            throw new InvalidUserException(DomainConstants.NOT_ALLOWED_TO_CREATE_CUSTOMER_OR_ADMIN);
-        }
     }
 
     @Override
@@ -68,6 +58,28 @@ public class UserUseCase implements IUserServicePort {
         }
         if (userPersistencePort.existsUserByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException(DomainConstants.USER_EMAIL_ALREADY_EXISTS);
+        }
+    }
+
+    private void validatePermissionsForCustomer(User user) {
+        if (user.getRole().getName() != RoleName.CUSTOMER) {
+            throw new InvalidUserException(DomainConstants.ONLY_CUSTOMER_CAN_REGISTER_WITHOUT_AUTH);
+        }
+    }
+
+    private void validatePermissionsForAdminAndOwner(Long authenticatedUserId, RoleName newUserRole) {
+        User authenticatedUser = userPersistencePort.getUserById(authenticatedUserId);
+
+        if (newUserRole == RoleName.OWNER && authenticatedUser.getRole().getName() != RoleName.ADMINISTRATOR) {
+            throw new InvalidUserException(DomainConstants.ONLY_ADMIN_CAN_CREATE_OWNER);
+        }
+
+        if (newUserRole == RoleName.EMPLOYEE && authenticatedUser.getRole().getName() != RoleName.OWNER) {
+            throw new InvalidUserException(DomainConstants.ONLY_OWNER_CAN_CREATE_EMPLOYEE);
+        }
+
+        if (newUserRole == RoleName.CUSTOMER || newUserRole == RoleName.ADMINISTRATOR) {
+            throw new InvalidUserException(DomainConstants.NOT_ALLOWED_TO_CREATE_CUSTOMER_OR_ADMIN);
         }
     }
 }

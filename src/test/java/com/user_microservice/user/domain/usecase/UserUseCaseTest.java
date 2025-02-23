@@ -113,7 +113,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    void testValidatePermissions_CreateOwnerWithoutAdminRole() {
+    void testValidatePermissions_ForAdminAndOwner_CreateOwnerWithoutAdminRole() {
         authenticatedUser.getRole().setName(RoleName.EMPLOYEE);
         newUser.getRole().setName(RoleName.OWNER);
 
@@ -127,7 +127,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    void testValidatePermissions_CreateEmployeeWithOwnerRole() {
+    void testValidatePermissions_ForAdminAndOwner_CreateEmployeeWithOwnerRole() {
         authenticatedUser.getRole().setName(RoleName.OWNER);
         newUser.getRole().setName(RoleName.EMPLOYEE);
 
@@ -148,7 +148,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    void testValidatePermissions_CreateOwnerWithOwnerRole() {
+    void testValidatePermissions_ForAdminAndOwner_CreateOwnerWithOwnerRole() {
         authenticatedUser.getRole().setName(RoleName.OWNER);
         newUser.getRole().setName(RoleName.OWNER);
 
@@ -162,7 +162,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    void testValidatePermissions_CreateCustomerOrAdmin() {
+    void testValidatePermissions_ForAdminAndOwner_CreateCustomerOrAdmin() {
 
         authenticatedUser.getRole().setName(RoleName.OWNER);
 

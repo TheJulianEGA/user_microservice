@@ -50,10 +50,4 @@ public class UserJpaAdapter implements IUserPersistencePort {
                 .orElseThrow( () -> new UserNotFundException(InfrastructureConstants.USER_NOT_FOUND));
     }
 
-    @Override
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(userEntityMapper::toModel)
-                .orElseThrow(() -> new UserNotFundException(InfrastructureConstants.USER_NOT_FOUND));
-    }
 }
