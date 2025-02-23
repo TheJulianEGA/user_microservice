@@ -61,7 +61,6 @@ class AuthControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(authenticationResponse)));
 
-        // Verificamos que se llamó al handler con la solicitud esperada
         verify(authenticationHandler, times(1)).login(any(AuthenticationRequest.class));
     }
 

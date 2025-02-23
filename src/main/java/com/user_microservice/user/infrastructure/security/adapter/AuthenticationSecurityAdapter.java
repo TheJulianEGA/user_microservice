@@ -2,7 +2,6 @@ package com.user_microservice.user.infrastructure.security.adapter;
 
 import com.user_microservice.user.domain.exception.ExtraClaimsException;
 import com.user_microservice.user.domain.exception.InvalidCredentialsException;
-import com.user_microservice.user.domain.exception.NoAuthenticatedUserIdFoundException;
 import com.user_microservice.user.domain.model.Role;
 import com.user_microservice.user.domain.model.User;
 import com.user_microservice.user.domain.security.IAuthenticationSecurityPort;

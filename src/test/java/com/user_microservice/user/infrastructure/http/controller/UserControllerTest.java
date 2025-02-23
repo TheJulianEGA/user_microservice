@@ -6,7 +6,6 @@ import com.user_microservice.user.application.dto.userdto.UserRequest;
 import com.user_microservice.user.application.dto.userdto.UserResponse;
 import com.user_microservice.user.application.handler.userhandler.IUserHandler;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -59,12 +58,11 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Given valid user data, when registering user, then return created user")
-    void givenValidUserData_whenRegisteringUser_thenReturnCreatedUser() throws Exception {
+    void givenValidUserData_whenRegisteringEmployeeOrOwner_thenReturnCreatedUser() throws Exception {
 
         when(userHandler.registerUser(any(UserRequest.class))).thenReturn(userResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/create")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/create_employee_or_owner")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -72,5 +70,36 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(userResponse)));
 
         verify(userHandler, times(1)).registerUser(any(UserRequest.class));
+    }
+
+    @Test
+    void givenValidCustomerData_whenRegisteringCustomer_thenReturnCreatedCustomer() throws Exception {
+
+        when(userHandler.registerUser(any(UserRequest.class))).thenReturn(userResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/create_customer")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userRequest)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(userResponse)));
+
+        verify(userHandler, times(1)).registerUser(any(UserRequest.class));
+    }
+
+    @Test
+    void givenUserId_whenCheckingIfUserHasOwnerRole_thenReturnBooleanResponse() throws Exception {
+
+        Long userId = 1L;
+        boolean expectedResponse = true;
+
+        when(userHandler.existsUserWithOwnerRole(userId)).thenReturn(expectedResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/exists_user_owner/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedResponse)));
+
+        verify(userHandler, times(1)).existsUserWithOwnerRole(userId);
     }
 }
