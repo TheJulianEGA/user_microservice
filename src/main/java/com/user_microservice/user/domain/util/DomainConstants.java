@@ -11,6 +11,7 @@ public class DomainConstants {
     public static final String ONLY_ADMIN_CAN_CREATE_OWNER = "Only an administrator can create an owner.";
     public static final String ONLY_OWNER_CAN_CREATE_EMPLOYEE = "Only an owner can create an employee.";
     public static final String NOT_ALLOWED_TO_CREATE_CUSTOMER_OR_ADMIN = "Creating users with the role CUSTOMER or ADMINISTRATOR is not allowed.";
+    public static final String ONLY_CUSTOMER_CAN_REGISTER_WITHOUT_AUTH = "Only customers can register without authentication";
 
     private DomainConstants(){}
 }

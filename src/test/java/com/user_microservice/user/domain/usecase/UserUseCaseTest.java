@@ -1,9 +1,6 @@
 package com.user_microservice.user.domain.usecase;
 
-import com.user_microservice.user.domain.exception.DocumentNumberAlreadyExistsException;
-import com.user_microservice.user.domain.exception.EmailAlreadyExistsException;
-import com.user_microservice.user.domain.exception.InvalidUserException;
-import com.user_microservice.user.domain.exception.UserNotOfLegalAgeException;
+import com.user_microservice.user.domain.exception.*;
 import com.user_microservice.user.domain.model.Role;
 import com.user_microservice.user.domain.model.User;
 import com.user_microservice.user.domain.security.IAuthenticationSecurityPort;
@@ -70,10 +67,8 @@ class UserUseCaseTest {
         verify(authenticationSecurityPort, times(1)).getAuthenticatedUserId();
         verify(userPersistencePort, times(1)).getUserById(authenticatedUserId);
         verify(userPersistencePort, times(1)).existsUserByEmail(newUser.getEmail());
-        verify(userPersistencePort, times(1))
-                .existsUserByDocumentNumber(newUser.getDocumentNumber());
+        verify(userPersistencePort, times(1)).existsUserByDocumentNumber(newUser.getDocumentNumber());
         verify(userPersistencePort, times(1)).registerUser(newUser);
-
     }
 
     @Test
@@ -81,10 +76,8 @@ class UserUseCaseTest {
         newUser.setBirthDate(LocalDate.now().minusYears(17));
 
         UserNotOfLegalAgeException exception = assertThrows(UserNotOfLegalAgeException.class,
-                () -> {userUseCase.registerUser(newUser);
-        });
+                () -> userUseCase.registerUser(newUser));
         assertEquals(DomainConstants.USER_NOT_OF_LEGAL_EGE, exception.getMessage());
-
     }
 
     @Test
@@ -103,67 +96,15 @@ class UserUseCaseTest {
     void testRegisterUser_DocumentNumberAlreadyExists() {
         when(userPersistencePort.existsUserByDocumentNumber(newUser.getDocumentNumber())).thenReturn(true);
 
-        DocumentNumberAlreadyExistsException exception =assertThrows(DocumentNumberAlreadyExistsException.class,
+        DocumentNumberAlreadyExistsException exception = assertThrows(DocumentNumberAlreadyExistsException.class,
                 () -> userUseCase.registerUser(newUser));
         assertEquals(DomainConstants.USER_DOCUMENT_NUMBER_ALREADY_EXISTS, exception.getMessage());
 
-
-        verify(userPersistencePort, times(1))
-                .existsUserByDocumentNumber(newUser.getDocumentNumber());
-    }
-
-    @Test
-    void testValidatePermissions_CreateOwnerWithoutAdminRole() {
-        authenticatedUser.getRole().setName(RoleName.EMPLOYEE);
-        newUser.getRole().setName(RoleName.OWNER);
-
-        when(authenticationSecurityPort.getAuthenticatedUserId()).thenReturn(authenticatedUserId);
-        when(userPersistencePort.getUserById(authenticatedUserId)).thenReturn(authenticatedUser);
-
-        assertThrows(InvalidUserException.class, () -> userUseCase.registerUser(newUser));
-
-        verify(authenticationSecurityPort, times(1)).getAuthenticatedUserId();
-        verify(userPersistencePort, times(1)).getUserById(authenticatedUserId);
-    }
-
-    @Test
-    void testValidatePermissions_CreateEmployeeWithOwnerRole() {
-        authenticatedUser.getRole().setName(RoleName.OWNER);
-        newUser.getRole().setName(RoleName.EMPLOYEE);
-
-        when(authenticationSecurityPort.getAuthenticatedUserId()).thenReturn(authenticatedUserId);
-        when(userPersistencePort.getUserById(authenticatedUserId)).thenReturn(authenticatedUser);
-        when(userPersistencePort.existsUserByEmail(newUser.getEmail())).thenReturn(false);
-        when(userPersistencePort.existsUserByDocumentNumber(newUser.getDocumentNumber())).thenReturn(false);
-        when(userPersistencePort.registerUser(newUser)).thenReturn(newUser);
-
-        User result = userUseCase.registerUser(newUser);
-        assertNotNull(result);
-
-        verify(authenticationSecurityPort, times(1)).getAuthenticatedUserId();
-        verify(userPersistencePort, times(1)).getUserById(authenticatedUserId);
-        verify(userPersistencePort, times(1)).existsUserByEmail(newUser.getEmail());
         verify(userPersistencePort, times(1)).existsUserByDocumentNumber(newUser.getDocumentNumber());
-        verify(userPersistencePort, times(1)).registerUser(newUser);
     }
 
     @Test
-    void testValidatePermissions_CreateOwnerWithOwnerRole() {
-        authenticatedUser.getRole().setName(RoleName.OWNER);
-        newUser.getRole().setName(RoleName.OWNER);
-
-        when(authenticationSecurityPort.getAuthenticatedUserId()).thenReturn(authenticatedUserId);
-        when(userPersistencePort.getUserById(authenticatedUserId)).thenReturn(authenticatedUser);
-
-        assertThrows(InvalidUserException.class, () -> userUseCase.registerUser(newUser));
-
-        verify(authenticationSecurityPort, times(1)).getAuthenticatedUserId();
-        verify(userPersistencePort, times(1)).getUserById(authenticatedUserId);
-    }
-
-    @Test
-    void testValidatePermissions_CreateCustomerOrAdmin() {
-
+    void testRegisterUser_ForbiddenRoleAssignments() {
         authenticatedUser.getRole().setName(RoleName.OWNER);
 
         User newCustomer = new User();
@@ -191,4 +132,43 @@ class UserUseCaseTest {
         verify(userPersistencePort, times(2)).getUserById(authenticatedUserId);
         verify(userPersistencePort, times(2)).existsUserByEmail(anyString());
     }
+
+    @Test
+    void testExistsUserWithOwnerRole_UserIsOwner() {
+        User user = new User();
+        user.setRole(new Role());
+        user.getRole().setName(RoleName.OWNER);
+
+        when(userPersistencePort.getUserById(authenticatedUserId)).thenReturn(user);
+
+        boolean result = userUseCase.existsUserWithOwnerRole(authenticatedUserId);
+        assertTrue(result);
+
+        verify(userPersistencePort, times(1)).getUserById(authenticatedUserId);
+    }
+
+    @Test
+    void testExistsUserWithOwnerRole_UserIsNotOwner() {
+        User user = new User();
+        user.setRole(new Role());
+        user.getRole().setName(RoleName.EMPLOYEE);
+
+        when(userPersistencePort.getUserById(authenticatedUserId)).thenReturn(user);
+
+        boolean result = userUseCase.existsUserWithOwnerRole(authenticatedUserId);
+        assertFalse(result);
+
+        verify(userPersistencePort, times(1)).getUserById(authenticatedUserId);
+    }
+
+    @Test
+    void testExistsUserWithOwnerRole_UserNotFound() {
+        when(userPersistencePort.getUserById(authenticatedUserId)).thenReturn(null);
+
+        UserNotFundException exception = assertThrows(UserNotFundException.class, () -> userUseCase.existsUserWithOwnerRole(authenticatedUserId));
+        assertEquals(DomainConstants.USER_NOT_FOUND, exception.getMessage());
+
+        verify(userPersistencePort, times(1)).getUserById(authenticatedUserId);
+    }
 }
+

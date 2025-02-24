@@ -1,7 +1,6 @@
 package com.user_microservice.user.infrastructure.security.adapter;
 
 import com.user_microservice.user.domain.exception.InvalidCredentialsException;
-import com.user_microservice.user.domain.exception.NoAuthenticatedUserIdFoundException;
 import com.user_microservice.user.domain.model.Role;
 import com.user_microservice.user.domain.model.User;
 import com.user_microservice.user.domain.spi.IRolePersistencePort;
@@ -146,12 +145,10 @@ class AuthenticationSecurityAdapterTest {
     }
 
     @Test
-    void getAuthenticatedUserId_ValidUser_ShouldReturnUserId() {
+    void givenAuthenticatedUser_whenRetrievingUserId_thenReturnUserId() {
 
         when(userDetails.getUsername()).thenReturn("1");
-
         when(authentication.getPrincipal()).thenReturn(userDetails);
-
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
@@ -161,26 +158,27 @@ class AuthenticationSecurityAdapterTest {
         assertNotNull(userId);
         assertEquals(1L, userId);
 
-        verify(userDetails,times(1)).getUsername();
-        verify(authentication,times(1)).getPrincipal();
-        verify(securityContext,times(1)).getAuthentication();
+        verify(userDetails, times(1)).getUsername();
+        verify(authentication, times(2)).getPrincipal();
+        verify(securityContext, times(1)).getAuthentication();
     }
 
     @Test
-    void getAuthenticatedUserId_NoAuthenticatedUser_ShouldThrowException() {
+    void givenNoAuthenticatedUser_whenRetrievingUserId_thenReturnNull() {
 
         when(authentication.getPrincipal()).thenReturn("invalidUser");
-
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
 
-        assertThrows(NoAuthenticatedUserIdFoundException.class,
-                () -> authenticationSecurityAdapter.getAuthenticatedUserId());
+        Long userId = authenticationSecurityAdapter.getAuthenticatedUserId();
 
-        verify(authentication,times(1)).getPrincipal();
-        verify(securityContext,times(1)).getAuthentication();
+        assertNull(userId);
+
+        verify(authentication, times(2)).getPrincipal();
+        verify(securityContext, times(1)).getAuthentication();
     }
+
     @Test
     void authenticate_TooManyFailedAttempts_ShouldBlockAccount() {
         String email = "test@example.com";

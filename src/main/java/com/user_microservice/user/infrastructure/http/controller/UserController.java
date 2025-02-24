@@ -41,8 +41,29 @@ public class UserController {
                     content = @Content)
     })
     @PreAuthorize(InfrastructureConstants.ROLE_ADMINISTRATOR + " or " + InfrastructureConstants.ROLE_OWNER )
-    @PostMapping("/create")
+    @PostMapping("/create_employee_or_owner")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest) {
+
+        UserResponse userResponse = userHandler.registerUser(userRequest);
+
+        return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
+    }
+
+    @Operation(
+            summary = "Create a new customer user",
+            description = "Registers a new customer in the system and returns the created user details."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Customer successfully created",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request data",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    @PostMapping("/create_customer")
+    public ResponseEntity<UserResponse> createUserCustomer(@Valid @RequestBody UserRequest userRequest) {
 
         UserResponse userResponse = userHandler.registerUser(userRequest);
 
