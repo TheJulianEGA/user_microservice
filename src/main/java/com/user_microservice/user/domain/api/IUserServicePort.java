@@ -9,4 +9,6 @@ public interface IUserServicePort {
     User registerUser(User user);
 
     boolean existsUserWithOwnerRole(Long userId);
+
+    boolean existsUserWithEmployeeRole(Long userId);
 }

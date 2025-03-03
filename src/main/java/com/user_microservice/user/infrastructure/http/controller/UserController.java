@@ -85,4 +85,20 @@ public class UserController {
         return ResponseEntity.ok(exists);
     }
 
+    @Operation(
+            summary = "Check if a user with an employee role exists",
+            description = "Returns `true` if a user with the employee role is associated with the given `employeeId`, " +
+                    "otherwise returns `false`."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful query"),
+            @ApiResponse(responseCode = "400", description = "Invalid employee ID"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/exists_user_employee/{employeeId}")
+    public ResponseEntity<Boolean> existsUserWithEmployeeRole(@PathVariable Long employeeId) {
+        boolean exists = userHandler.existsUserWithEmployeeRole(employeeId);
+        return ResponseEntity.ok(exists);
+    }
+
 }
