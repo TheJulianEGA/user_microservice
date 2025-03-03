@@ -41,11 +41,24 @@ public class UserUseCase implements IUserServicePort {
 
         User user = userPersistencePort.getUserById(userId);
 
+        validateExistUser( user);
+
+        return RoleName.OWNER.equals(user.getRole().getName());
+    }
+
+    @Override
+    public boolean existsUserWithEmployeeRole(Long userId) {
+        User user = userPersistencePort.getUserById(userId);
+
+        validateExistUser( user);
+
+        return RoleName.EMPLOYEE.equals(user.getRole().getName());
+    }
+
+    private void validateExistUser(User user){
         if (user == null) {
             throw new UserNotFundException(DomainConstants.USER_NOT_FOUND);
         }
-
-        return RoleName.OWNER.equals(user.getRole().getName());
     }
 
     private void validateUser(User user) {

@@ -8,4 +8,6 @@ public interface IUserHandler {
     UserResponse registerUser(UserRequest userRequest);
 
     boolean existsUserWithOwnerRole(Long userId);
+
+    boolean existsUserWithEmployeeRole(Long userId);
 }

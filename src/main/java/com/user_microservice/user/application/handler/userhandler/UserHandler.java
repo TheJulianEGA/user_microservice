@@ -44,4 +44,9 @@ public class UserHandler implements IUserHandler {
 
         return userServicePort.existsUserWithOwnerRole(userId);
     }
+
+    @Override
+    public boolean existsUserWithEmployeeRole(Long userId) {
+        return userServicePort.existsUserWithEmployeeRole(userId);
+    }
 }

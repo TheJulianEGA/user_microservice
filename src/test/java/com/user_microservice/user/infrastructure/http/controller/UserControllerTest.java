@@ -102,4 +102,21 @@ class UserControllerTest {
 
         verify(userHandler, times(1)).existsUserWithOwnerRole(userId);
     }
+
+    @Test
+    void givenEmployeeId_whenCheckingIfUserHasEmployeeRole_thenReturnBooleanResponse() throws Exception {
+        // Given
+        Long employeeId = 1L;
+        boolean expectedResponse = true;
+
+        when(userHandler.existsUserWithEmployeeRole(employeeId)).thenReturn(expectedResponse);
+
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/exists_user_employee/{employeeId}", employeeId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedResponse)));
+
+        verify(userHandler, times(1)).existsUserWithEmployeeRole(employeeId);
+    }
 }
